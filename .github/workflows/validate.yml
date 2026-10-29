@@ -1,0 +1,36 @@
+
+name: Wistia Analytics CI Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate Python syntax
+        run: |
+          python -m compileall -q lambda glue
+
+      - name: Check required project files
+        run: |
+          test -f README.md
+          test -f docs/setup.md
+          test -f docs/requirements_status.md
+          test -f sql/fr11_kpis.sql
+          test -f dashboard/redshift_fr11_kpi_chart.png
+          test -f architecture/architecture_screenshot.png
+          echo "Project file checks passed."
